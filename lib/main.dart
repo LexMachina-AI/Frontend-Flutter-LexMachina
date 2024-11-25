@@ -60,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _initializeGemini();
-    _loadMessages();
+    // _loadMessages();
   }
 
 
@@ -262,16 +262,16 @@ class _ChatPageState extends State<ChatPage> {
     _addMessage(textMessage);
   }
 
-  void _loadMessages() async {
-    final response = await rootBundle.loadString('assets/messages.json');
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
+  // void _loadMessages() async {
+  //   final response = await rootBundle.loadString('assets/messages.json');
+  //   final messages = (jsonDecode(response) as List)
+  //       .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
+  //       .toList();
 
-    setState(() {
-      _messages = messages;
-    });
-  }
+  //   setState(() {
+  //     _messages = messages;
+  //   });
+  // }
 
   // Modify your build method to show error if initialization failed
   @override
