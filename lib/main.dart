@@ -41,7 +41,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<types.Message> _messages = [];
+  final List<types.Message> _messages = [];
   final _user = const types.User(
     id: 'karthidreamr',
     firstName: 'KarthiDreamr',
@@ -268,16 +268,23 @@ class _ChatPageState extends State<ChatPage> {
 
   }
 
-  // Add new method for handling AI responses
+  bool _isAITyping = false;
+
+  // Modify the _handleAIResponse method to include typing indicator
   Future<void> _handleAIResponse(String userMessage) async {
     try {
-      // Show typing indicator (optional)
+      // Show typing indicator
       setState(() {
-        // You can add a loading state here if you want
+        _isAITyping = true;
       });
 
       final content = Content.text(userMessage);
       final response = await _chatSession.sendMessage(content);
+      
+      // Hide typing indicator
+      setState(() {
+        _isAITyping = false;
+      });
       
       if (response.text != null) {
         final aiMessage = types.TextMessage(
@@ -289,7 +296,11 @@ class _ChatPageState extends State<ChatPage> {
         _addMessage(aiMessage);
       }
     } catch (e) {
-      // Add error message to chat instead of showing a dialog
+      // Hide typing indicator even if there's an error
+      setState(() {
+        _isAITyping = false;
+      });
+      
       final errorMessage = types.TextMessage(
         author: _aiUser,
         createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -311,51 +322,62 @@ class _ChatPageState extends State<ChatPage> {
   //   });
   // }
 
-  // Modify your build method to show error if initialization failed
+    // Modify the build method to include typing indicator
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Law AI India'),
+          title: const Text('Chat with Gemini AI'),
+          // Add typing indicator in the app bar
+          bottom: _isAITyping ? const PreferredSize(
+            preferredSize: Size.fromHeight(4.0),
+            child: LinearProgressIndicator(),
+          ) : null,
         ),
-        body: _initError != null
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        body: Chat(
+          messages: _messages,
+          onAttachmentPressed: _handleAttachmentPressed,
+          onMessageTap: _handleMessageTap,
+          onPreviewDataFetched: _handlePreviewDataFetched,
+          onSendPressed: _handleSendPressed,
+          showUserAvatars: true,
+          showUserNames: true,
+          user: _user,
+          // Add typing indicator in the chat
+          customBottomWidget: _isAITyping ? Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
                     children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 60,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Failed to initialize Gemini AI',
+                      Text(
+                        'Gemini is typing',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _initError!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              )
-            : Chat(
-                messages: _messages,
-                onAttachmentPressed: _handleAttachmentPressed,
-                onMessageTap: _handleMessageTap,
-                onPreviewDataFetched: _handlePreviewDataFetched,
-                onSendPressed: _handleSendPressed,
-                showUserAvatars: true,
-                showUserNames: true,
-                user: _user,
-              ),
+              ],
+            ),
+          ) : null,
+        ),
       );
 }
