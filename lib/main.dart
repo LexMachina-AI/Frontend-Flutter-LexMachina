@@ -43,13 +43,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<types.Message> _messages = [];
   final _user = const types.User(
-    id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
+    id: 'karthidreamr',
+    firstName: 'KarthiDreamr',
   );
 
   final _aiUser = const types.User(
     id: 'gemini-ai',
     firstName: 'Gemini',
   );
+
+
 
   late GenerativeModel _model;
   late ChatSession _chatSession;
@@ -251,7 +254,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message) {
+  Future<void> _handleSendPressed(types.PartialText message) async {
     final textMessage = types.TextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -260,6 +263,41 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     _addMessage(textMessage);
+
+    await _handleAIResponse(message.text);
+
+  }
+
+  // Add new method for handling AI responses
+  Future<void> _handleAIResponse(String userMessage) async {
+    try {
+      // Show typing indicator (optional)
+      setState(() {
+        // You can add a loading state here if you want
+      });
+
+      final content = Content.text(userMessage);
+      final response = await _chatSession.sendMessage(content);
+      
+      if (response.text != null) {
+        final aiMessage = types.TextMessage(
+          author: _aiUser,
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          id: const Uuid().v4(),
+          text: response.text!,
+        );
+        _addMessage(aiMessage);
+      }
+    } catch (e) {
+      // Add error message to chat instead of showing a dialog
+      final errorMessage = types.TextMessage(
+        author: _aiUser,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: const Uuid().v4(),
+        text: 'I apologize, I encountered an error processing your message.',
+      );
+      _addMessage(errorMessage);
+    }
   }
 
   // void _loadMessages() async {
