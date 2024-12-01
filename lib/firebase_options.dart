@@ -73,4 +73,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'lexmachina-law-ai.firebasestorage.app',
     measurementId: 'G-D1F33D5KKR',
   );
+
 }
