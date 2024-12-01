@@ -42,5 +42,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
-lib/pages/chat_page.dart
 .vscode/settings.json
