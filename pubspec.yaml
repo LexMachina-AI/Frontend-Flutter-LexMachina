@@ -47,6 +47,7 @@ dependencies:
   http: ^1.2.2
   google_generative_ai: ^0.4.6
   flutter_dotenv: ^5.2.1
+  firebase_core: ^3.8.0
 
 dev_dependencies:
   flutter_test:
