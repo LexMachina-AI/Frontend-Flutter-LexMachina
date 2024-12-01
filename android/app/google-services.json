@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "198846245506",
+    "project_id": "lexmachina-law-ai",
+    "storage_bucket": "lexmachina-law-ai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198846245506:android:4a30b4068535480ea6e29b",
+        "android_client_info": {
+          "package_name": "com.lexmachina.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNobImr_jrmYn9nBXNgakU5167_dt_V-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
