@@ -1,4 +1,5 @@
 import 'dart:convert'; // For JSON encoding/decoding
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http; // Dart HTTP client
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
@@ -15,13 +16,17 @@ class GeminiService {
       throw Exception('Backend URL is not configured.');
     }
 
-    print('Loaded backend URL: $backendUrl');
+    if (kDebugMode) {
+      print('Loaded backend URL: $backendUrl');
+    }
 
     // Perform a health check to ensure the backend is reachable
     try {
       final response = await http.get(Uri.parse('$backendUrl/'));
       if (response.statusCode == 200) {
-        print('Backend initialization successful: ${response.body}');
+        if (kDebugMode) {
+          print('Backend initialization successful: ${response.body}');
+        }
       } else {
         throw Exception('Backend health check failed: ${response.statusCode}');
       }

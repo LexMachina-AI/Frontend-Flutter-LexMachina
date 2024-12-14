@@ -133,6 +133,9 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     if (!_isGeminiInitialized) {
       return Scaffold(
+        appBar: AppBar(
+          title: const Text('Indian Legal AI Assistant'),
+        ),
         body: Center(
           child: _initError != null
               ? Text('Error: $_initError')
