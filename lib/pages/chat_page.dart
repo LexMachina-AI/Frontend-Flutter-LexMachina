@@ -100,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message) async {
+  void _handleSendPressed(types.PartialText message) async { 
     final textMessage = types.TextMessage(
       author: ChatUsers.currentUser,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -143,7 +143,7 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat with Gemini AI'),
+        title: const Text('Indian Legal AI Assistant'),
         bottom: _isAITyping ? const PreferredSize(
           preferredSize: Size.fromHeight(4.0),
           child: LinearProgressIndicator(),
