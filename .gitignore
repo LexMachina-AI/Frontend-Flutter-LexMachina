@@ -45,3 +45,4 @@ app.*.map.json
 .vscode/settings.json
 
 pubspec.lock
+my-release-key.jks
