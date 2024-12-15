@@ -10,7 +10,7 @@ class GeminiService {
   Future<void> initialize() async {
     // Load backend URL from environment variables
     backendUrl = dotenv.dotenv.env['BACKEND_URL'] ??
-        'https://codespaces-flask-916007394186.asia-south1.run.app';
+        '';
 
     if (backendUrl.isEmpty) {
       throw Exception('Backend URL is not configured.');
@@ -65,9 +65,29 @@ class GeminiService {
         }
 
         // Extract and save the AI response
-        final aiResponse = responseBody['response'] as String;
-        conversationHistory.add({'user': question, 'ai': aiResponse});
-        return aiResponse;
+        final backendResponse = responseBody['response'] as String;
+
+        if (kDebugMode) {
+          print("Backend Raw Response:\n$backendResponse");
+        }
+
+        final parser = BackendResponseParser();
+        try {
+          final aiResponse = parser.parseResponse(response.body);
+          
+          if (kDebugMode) {
+            print("Parsed Response:\n$aiResponse");
+          }
+          conversationHistory.add({'user': question, 'ai': aiResponse});
+          return aiResponse;
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error: $e");
+          }
+          return null;
+        }
+
+        
       } else {
         throw Exception(
             'Failed to fetch response from backend: ${response.statusCode}');
@@ -75,6 +95,30 @@ class GeminiService {
     } catch (e) {
       // Handle exceptions like network errors
       throw Exception('Error communicating with backend: $e');
+    }
+  }
+}
+
+class BackendResponseParser {
+  // Parses the JSON response from the backend
+  String parseResponse(String backendResponse) {
+    try {
+      final jsonData = jsonDecode(backendResponse);
+
+      if (!jsonData.containsKey('response')) {
+        throw Exception('Invalid JSON format: Missing response field');
+      }
+
+      if (!jsonData.containsKey('status')) {
+        throw Exception('Invalid JSON format: Missing status field');
+      }
+
+      if (jsonData['status'] != 'success') {
+        throw Exception('Backend error: ${jsonData['response']}');
+      }      
+      return jsonData['response'];
+    } catch (e) {
+      throw Exception('Error parsing JSON response: $e');
     }
   }
 }
