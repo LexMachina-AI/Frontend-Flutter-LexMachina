@@ -39,7 +39,7 @@ dependencies:
   image_picker: ^1.1.2
   path_provider: ^2.1.5
   uuid: ^4.5.1
-  file_picker: ^8.0.7
+#  file_picker: any
   open_filex: ^4.5.0
   mime: ^2.0.0
   flutter_chat_types: ^3.6.2
@@ -60,7 +60,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -48,7 +48,7 @@ class _ChatPageState extends State<ChatPage> {
                 title: const Text('Photo'),
                 onTap: () {
                   Navigator.pop(context);
-                  _handleImageSelection();
+                  // _handleImageSelection();
                 },
               ),
               ListTile(
@@ -56,7 +56,7 @@ class _ChatPageState extends State<ChatPage> {
                 title: const Text('File'),
                 onTap: () {
                   Navigator.pop(context);
-                  _handleFileSelection();
+                  // _handleFileSelection();
                 },
               ),
             ],
@@ -66,19 +66,19 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _handleFileSelection() async {
-    final result = await FileHandlers.handleFileSelection(ChatUsers.currentUser);
-    if (result != null) {
-      setState(() => _messages.insert(0, result));
-    }
-  }
-
-  void _handleImageSelection() async {
-    final result = await FileHandlers.handleImageSelection(ChatUsers.currentUser);
-    if (result != null) {
-      setState(() => _messages.insert(0, result));
-    }
-  }
+  // void _handleFileSelection() async {
+  //   final result = await FileHandlers.handleFileSelection(ChatUsers.currentUser);
+  //   if (result != null) {
+  //     setState(() => _messages.insert(0, result));
+  //   }
+  // }
+  //
+  // void _handleImageSelection() async {
+  //   final result = await FileHandlers.handleImageSelection(ChatUsers.currentUser);
+  //   if (result != null) {
+  //     setState(() => _messages.insert(0, result));
+  //   }
+  // }
 
   void _handleMessageTap(BuildContext _, types.Message message) async {
     if (message is types.FileMessage) {
