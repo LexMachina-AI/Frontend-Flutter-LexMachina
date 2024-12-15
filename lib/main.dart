@@ -6,16 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'pages/chat_page.dart';
 import 'firebase_options.dart';
 
-// void main() async {
-
-//   await Firebase.initializeApp();
-
-//   // Pass all uncaught "fatal" errors from the framework to Crashlytics
-//   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-
-//   runApp(MyApp());
-// }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
