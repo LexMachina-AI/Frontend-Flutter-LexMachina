@@ -4,7 +4,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import '../models/chat_users.dart';
 import '../services/gemini_service.dart';
 import '../widgets/chat_typing_indicator.dart';
-import '../utils/file_handlers.dart';
+// import '../utils/file_handlers.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
