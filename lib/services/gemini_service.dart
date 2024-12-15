@@ -1,50 +1,124 @@
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:convert'; // For JSON encoding/decoding
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http; // Dart HTTP client
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 class GeminiService {
-  late GenerativeModel _model;
-  late ChatSession chatSession;
+  late String backendUrl;
 
+  // Initializes the service by loading the backend URL and validating it
   Future<void> initialize() async {
-    final apiKey = dotenv.dotenv.env['GEMINI_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
-      throw Exception('GEMINI_API_KEY not found in .env file');
+    // Load backend URL from environment variables
+    backendUrl = dotenv.dotenv.env['BACKEND_URL'] ??
+        '';
+
+    if (backendUrl.isEmpty) {
+      throw Exception('Backend URL is not configured.');
     }
 
-    _model = GenerativeModel(
-      model: 'gemini-1.5-pro',
-      apiKey: apiKey,
-      generationConfig: GenerationConfig(
-        temperature: 1,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 8192,
-        responseMimeType: 'text/plain',
-      ),      
-      systemInstruction: Content.system('''
-You are LexMachina 🤖⚖️ an Indian law legal AI Assistant
+    if (kDebugMode) {
+      print('Loaded backend URL: $backendUrl');
+    }
 
-1. Provide concise answers to legal questions, sparingly use emojis and elaborate only if user asks more questions
-2. Include relevant, verified source links below your response. Ensure all the links are current and from official Indian government legal websites only and not from other low quality sources.
-3. Only answer questions related to law and legal topics. Politely decline answering non-legal questions as its a violation to the service policy.
-4. Use plain language and avoid legal jargon when possible. When legal terms are necessary, provide brief explanations.
-5. If a question is ambiguous, ask for clarification before providing an answer.
-6. 
-7. If uncertain about a specific legal point, acknowledge limitations and suggest consulting a qualified attorney.
-8. Provide citations to relevant statutes, case law, or regulations when discussing specific legal points.
-9. Use formatting (bold, italics, bullet points) to enhance readability of complex information.
-10. Provide historical context for laws and legal concepts when it adds value to the explanation.
-11. Use storytelling techniques to explain legal concepts when appropriate. Frame explanations as narratives or case studies to enhance understanding.
-12. Incorporate relevant historical examples or landmark cases to illustrate legal principles. Explain how past events have shaped current laws.
-'''),
-    );
-    
-    chatSession = _model.startChat();
+    // Perform a health check to ensure the backend is reachable
+    try {
+      final response = await http.get(Uri.parse('$backendUrl/'));
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Backend initialization successful: ${response.body}');
+        }
+      } else {
+        throw Exception('Backend health check failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to initialize backend: $e');
+    }
   }
 
-  Future<String?> sendMessage(String message) async {
-    final content = Content.text(message);
-    final response = await chatSession.sendMessage(content);
-    return response.text;
+  // Maintains the chat session history in memory
+  List<Map<String, String>> conversationHistory = [];
+
+  // Sends a message to the backend and retrieves the response
+  Future<String?> sendMessage(String question) async {
+    if (question.isEmpty) {
+      throw Exception('Question cannot be empty.');
+    }
+
+    // Construct the payload for the backend request
+    final requestBody = jsonEncode({"question": question});
+
+    try {
+      // Send POST request to the backend API
+      final response = await http.post(
+        Uri.parse('$backendUrl/ask'),
+        headers: {'Content-Type': 'application/json'},
+        body: requestBody,
+      );
+
+      // Handle backend response
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+
+        // Check if the response has an error
+        if (responseBody.containsKey('error')) {
+          throw Exception('Backend Error: ${responseBody['error']}');
+        }
+
+        // Extract and save the AI response
+        final backendResponse = responseBody['response'] as String;
+
+        if (kDebugMode) {
+          print("Backend Raw Response:\n$backendResponse");
+        }
+
+        final parser = BackendResponseParser();
+        try {
+          final aiResponse = parser.parseResponse(response.body);
+          
+          if (kDebugMode) {
+            print("Parsed Response:\n$aiResponse");
+          }
+          conversationHistory.add({'user': question, 'ai': aiResponse});
+          return aiResponse;
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error: $e");
+          }
+          return null;
+        }
+
+        
+      } else {
+        throw Exception(
+            'Failed to fetch response from backend: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions like network errors
+      throw Exception('Error communicating with backend: $e');
+    }
+  }
+}
+
+class BackendResponseParser {
+  // Parses the JSON response from the backend
+  String parseResponse(String backendResponse) {
+    try {
+      final jsonData = jsonDecode(backendResponse);
+
+      if (!jsonData.containsKey('response')) {
+        throw Exception('Invalid JSON format: Missing response field');
+      }
+
+      if (!jsonData.containsKey('status')) {
+        throw Exception('Invalid JSON format: Missing status field');
+      }
+
+      if (jsonData['status'] != 'success') {
+        throw Exception('Backend error: ${jsonData['response']}');
+      }      
+      return jsonData['response'];
+    } catch (e) {
+      throw Exception('Error parsing JSON response: $e');
+    }
   }
 }
