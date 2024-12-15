@@ -43,4 +43,5 @@ app.*.map.json
 /android/app/release
 .env
 .vscode/settings.json
+
 my-release-key.jks
