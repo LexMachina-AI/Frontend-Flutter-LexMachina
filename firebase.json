@@ -1,1 +1,49 @@
-{"emulators":{"auth":{"port":9099},"firestore":{"port":8080},"ui":{"enabled":true},"singleProjectMode":true},"flutter":{"platforms":{"android":{"default":{"projectId":"lexmachina-ai","appId":"1:178769607471:android:1450621a0e3ec45e1bbfda","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"lexmachina-ai","configurations":{"android":"1:178769607471:android:1450621a0e3ec45e1bbfda","web":"1:178769607471:web:1272e7f0e21bfe0d1bbfda","windows":"1:178769607471:web:5495bcfc3819579f1bbfda"}}}}}}
+{
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "LexMachina",
+          "appId": "1:178769607471:android:1450621a0e3ec45e1bbfda",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "LexMachina",
+          "configurations": {
+            "android": "1:178769607471:android:1450621a0e3ec45e1bbfda",
+            "web": "1:178769607471:web:1272e7f0e21bfe0d1bbfda",
+            "windows": "1:178769607471:web:5495bcfc3819579f1bbfda"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

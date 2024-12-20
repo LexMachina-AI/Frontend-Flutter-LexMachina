@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
         ),
         GoRoute(
           path: '/chatScreen',
-          builder: (context, state) => ChatScreen(),
+          builder: (context, state) => ChatPage(),
         ),
       ],
     );
